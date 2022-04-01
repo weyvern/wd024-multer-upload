@@ -22,7 +22,7 @@ app.post('/upload-profile-pic', imageUploader.single('profile_pic'), (req, res, 
     path: `/uploads/${req.file.filename}`
   });
 });
-
+app.get('*', (req, res) => res.redirect('/'));
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
