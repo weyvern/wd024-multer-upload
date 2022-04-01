@@ -1,19 +1,28 @@
 import express from 'express';
+import expressLayouts from 'express-ejs-layouts';
 import { resolve } from 'path';
-import multer from 'multer';
+import imageUploader from './middlewares/imageUploader.js';
+import errorHandler from './middlewares/errorHandler.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-const upload = multer({ dest: 'public/uploads/' });
-
+app.use(expressLayouts);
+app.set('layout', resolve('./views/layouts/main'));
+app.set('view engine', 'ejs');
 app.use(express.static(resolve('./public')));
 
-app.get('/', (req, res) => res.sendFile(resolve('./views/index.html')));
+app.get('/', (req, res) => res.render('index', { title: 'Upload your image' }));
 
-app.post('/upload-profile-pic', upload.single('profile_pic'), (req, res, next) => {
-  console.log(req.file);
-  res.send(`<img src=${'/uploads/' + req.file.filename} alt=${req.body.user} width='300px'/>`);
+app.post('/upload-profile-pic', imageUploader.single('profile_pic'), (req, res, next) => {
+  if (!req.file) throw new Error('Please upload an image');
+  res.render('user', {
+    title: req.body.user,
+    user: req.body.user,
+    path: `/uploads/${req.file.filename}`
+  });
 });
+
+app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server running at http://localhost:${port}`));

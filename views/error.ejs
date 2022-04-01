@@ -1,0 +1,13 @@
+<div class="alert alert-danger" role="alert"><%= error %>. <span id="message"></span></div>
+<script>
+  let timeLeft = 5;
+  const messageContainer = document.getElementById('message');
+  messageContainer.innerHTML = `You'll be redirected in ${timeLeft} seconds`;
+  setTimeout(() => (window.location = '/'), timeLeft * 1000);
+  setInterval(
+    () => (
+      timeLeft--, (messageContainer.innerHTML = `You'll be redirected in ${timeLeft} seconds`)
+    ),
+    1000
+  );
+</script>
